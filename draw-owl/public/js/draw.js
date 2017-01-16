@@ -160,8 +160,7 @@ function countDown() {
             $('#message').hide();
             $('#ready').hide();
             drawCircles();
-        }
-        if (i === 4) {
+        } else if (i === 4) {
             window.clearInterval(id);
             drawingTimer();
         }
