@@ -94,19 +94,18 @@ function setupSocket() {
 
                 var updateMeL = false;
                 var updateMeR = false;
-                if (body.leftHandState === 2 && LposX && LposY) {
-                   updateMeL = true;
+                if (LposX && LposY) {
+                    updateMeL = true;
                     addClick(LX, LY, true, true);
                 }
 
-                if (body.rightHandState === 2 && RposX && RposY) {
+                if (RposX && RposY) {
                     updateMeR = true;
                     addClick(RX, RY, true, false);
                 }
 
                 if (updateMeL || updateMeR) {
                     redraw(updateMeL, updateMeR);
-                    //restartPath(!updateMeL, !updateMeR, true);
                 }
                 index++;
             }
@@ -151,9 +150,9 @@ function countDown() {
     var id = setInterval(function () {
         $('#countDown').html(text[i]);
 
-        if(i === 0){
+        if (i === 0) {
             $('#ready').hide();
-        } else if(i === 1){
+        } else if (i === 1) {
             drawCircles();
         } else if (i === 5) {
             window.clearInterval(id);
@@ -246,7 +245,6 @@ function prepareCanvas() {
     context = canvas.getContext("2d"); // Grab the 2d canvas context
 
     document.getElementById("canvasDiv");
-    redraw();
     countDown();
 
 }
@@ -350,15 +348,15 @@ function redraw(left, right) {
         context.beginPath();
         context.strokeStyle = curLColor;
         for (var j = 0; j < clickLX.length; j++) {
-            if (clickDragL[j] && j) {
-                context.moveTo(clickLX[j - 1], clickLY[j - 1]);
+            if (j > 0 && j < clickLX.length) {
+                drawPath(clickLX[j-1], clickLY[j - 1], clickLX[j], clickLY[j]);
             } else {
-                context.moveTo(clickLX[j], clickLY[j]);
+                console.log('I-R: ' + j);
             }
-            context.lineTo(clickLX[j], clickLY[j]);
         }
         context.stroke();
     } else {
+        console.log('left restart');
         restartPath(true, false, false);
     }
 
@@ -366,16 +364,20 @@ function redraw(left, right) {
         context.beginPath();
         context.strokeStyle = curRColor;
         for (var i = 0; i < clickRX.length; i++) {
-            if (clickDragR[i] && i) {
-                context.moveTo(clickRX[i - 1], clickRY[i - 1]);
+            if (i > 0 && i < clickRX.length) {
+                drawPath(clickRX[i-1], clickRY[i - 1], clickRX[i], clickRY[i]);
             } else {
-                context.moveTo(clickRX[i], clickRY[i]);
+                console.log('I-R: ' + i);
             }
-            context.lineTo(clickRX[i], clickRY[i]);
         }
         context.stroke();
     } else {
+        console.count('right restart');
         restartPath(false, true, false);
     }
+}
 
+function drawPath(fromX, fromY, toX, toY) {
+    context.moveTo(fromX, fromY);
+    context.lineTo(toX, toY);
 }
