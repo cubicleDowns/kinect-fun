@@ -39,7 +39,6 @@ function start() {
             setInterval(function () {
                 item += 1;
                 item = item % years.length;
-                console.log("newtime: ", item);
                 settime(globe, item)();
             }, 5000);
 

@@ -350,13 +350,14 @@ function redraw(left, right) {
         for (var j = 0; j < clickLX.length; j++) {
             if (j > 0 && j < clickLX.length) {
                 drawPath(clickLX[j-1], clickLY[j - 1], clickLX[j], clickLY[j]);
-            } else {
-                console.log('I-R: ' + j);
             }
+            //else {
+            //    //console.log('I-R: ' + j);
+            //}
         }
         context.stroke();
     } else {
-        console.log('left restart');
+        //console.log('left restart');
         restartPath(true, false, false);
     }
 
@@ -366,9 +367,10 @@ function redraw(left, right) {
         for (var i = 0; i < clickRX.length; i++) {
             if (i > 0 && i < clickRX.length) {
                 drawPath(clickRX[i-1], clickRY[i - 1], clickRX[i], clickRY[i]);
-            } else {
-                console.log('I-R: ' + i);
             }
+            //else {
+            //    //console.log('I-R: ' + i);
+            //}
         }
         context.stroke();
     } else {
