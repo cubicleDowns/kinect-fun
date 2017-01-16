@@ -1,0 +1,131 @@
+html {
+    font: 400 14px / 1.8 "Whitney SSm A", "Whitney SSm B", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    font-weight: bolder;
+}
+
+html, body {
+    padding: 0;
+    height: 100%;
+    margin: 0;
+    font-size: 50px;
+    color: #cf272d;
+    font-weight: bolder;
+}
+
+#canvasDiv {
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+#owlDiv {
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 20;
+    display: none;
+    text-align: center;
+    background: url('http://lorempixel.com/200/200/') center no-repeat;
+    background-size: cover;
+}
+
+#instructions {
+    overflow: hidden;
+    position: absolute;
+    width: 400px;
+    height: 50px;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+    text-align: right;
+    color: #FFFFFF;
+    font-size: 25px;
+    margin-right: 50px;
+}
+
+#byJosh {
+    overflow: hidden;
+    position: absolute;
+    width: 600px;
+    height: 50px;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    text-align: right;
+    color: #FFFFFF;
+    font-size: 25px;
+    margin-right: 50px;
+}
+
+#message {
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 15;
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    font-size: 75px;
+}
+
+.mainTeaser {
+    z-index: 15;
+    position: relative;
+    height: 100%;
+}
+
+.mainTeaser {
+    background-size: cover;
+}
+
+.mainTeaser .teaserWrap {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    text-align: center;
+}
+
+.drawingCountDown {
+    overflow: hidden;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    text-align: right;
+    display: none;
+    color: #FFFFFF;
+    z-index: 20;
+}
+
+.subline {
+    color: #FFFFFF;
+}
+
+#processOwl {
+    display: none;
+    background-color: black;
+    z-index: 30;
+}
+
+.noSelect {
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+
+    /* Rules below not implemented in browsers yet */
+    -o-user-select: none;
+    user-select: none;
+}
