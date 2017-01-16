@@ -42,27 +42,58 @@ var drawingAllowed = false;
 var socket = io.connect('http://127.0.0.1:5555/');
 var elem;
 
+function FOVify(fovnum) {
+    console.log('num before: ', fovnum);
+    var num = false;
+
+    if (fovnum >= 0.3 && fovnum <= 0.7) {
+        num = (fovnum - 0.3) * 2.5;
+        console.log('num after: ', num);
+        return num;
+    } else {
+        return false;
+    }
+}
+
 function setupSocket() {
     socket.on('bodyFrame', function (bodyFrame) {
         //ctx.clearRect(0, 0, canvas.width, canvas.height);
         var index = 0;
-        bodyFrame.bodies.forEach(function (body) {
-            if (body.tracked) {
+        var alreadyTracked = false;
+
+        for(var i = 0; i < bodyFrame.bodies.length; i++){
+            var body = bodyFrame.bodies[i];
+
+            if (body.tracked && !alreadyTracked) {
+                alreadyTracked = true;
                 //draw hand states
                 paint = true;
-                var LX = body.joints[7].depthX * canvasWidth;
-                var LY = body.joints[7].depthY * canvasHeight;
 
-                var RX = body.joints[11].depthX * canvasWidth;
-                var RY = body.joints[11].depthY * canvasHeight;
+                var LposX = FOVify(body.joints[7].depthX);
+                var LposY = FOVify(body.joints[7].depthY);
+                var RposX = FOVify(body.joints[11].depthX);
+                var RposY = FOVify(body.joints[11].depthY);
+
+
+                if(LposX && LposY){
+                    var LX = LposX * canvasWidth;
+                    var LY = LposY * canvasHeight;
+                }
+
+                if(RposX && RposY){
+                    var RX = RposX * canvasWidth;
+                    var RY = RposY * canvasHeight;
+                }
 
                 var updateMe = false;
-                if(body.leftHandState === 2) {
+                if(body.leftHandState === 2 && LposX && LposY) {
+                    console.log('drawing left');
                     updateMe = true;
                     addClick(LX, LY, true, true);
                 }
 
-                if(body.rightHandState === 2){
+                if(body.rightHandState === 2 && RposX && RposY){
+                    console.log('drawing right');
                     updateMe = true;
                     addClick(RX, RY, true, false);
                 }
@@ -74,7 +105,7 @@ function setupSocket() {
                 }
                 index++;
             }
-        });
+        }
     });
 }
 
