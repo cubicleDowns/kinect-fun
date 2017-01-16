@@ -56,28 +56,27 @@ var drawingAllowed = false;
 var socket = io.connect('http://127.0.0.1:5555/');
 var elem;
 
-function setupSocket() {
-    socket.on('bodyFrame', function (bodyFrame) {
-        //ctx.clearRect(0, 0, canvas.width, canvas.height);
-        var index = 0;
-        bodyFrame.bodies.forEach(function (body) {
-            if (body.tracked) {
-                //draw hand states
-                //paint = true;
-                //var LX = body.joints[7].depthX * canvasWidth;
-                //var LY = body.joints[7].depthY * canvasHeight;
-                //
-                //var RX = body.joints[11].depthX * canvasWidth;
-                //var RY = body.joints[11].depthY * canvasHeight;
-                //
-                //addClick(LX, LY, true, true);
-                //addClick(RX, RY, true, false);
-                //redraw();
-                //index++;
-            }
-        });
-    });
-}
+//function setupSocket() {
+//    socket.on('bodyFrame', function (bodyFrame) {
+//        var index = 0;
+//        bodyFrame.bodies.forEach(function (body) {
+//            if (body.tracked) {
+//                //draw hand states
+//                paint = true;
+//                var LX = body.joints[7].depthX * canvasWidth;
+//                var LY = body.joints[7].depthY * canvasHeight;
+//
+//                var RX = body.joints[11].depthX * canvasWidth;
+//                var RY = body.joints[11].depthY * canvasHeight;
+//
+//                addClick(LX, LY, true, true);
+//                addClick(RX, RY, true, false);
+//                redraw();
+//                index++;
+//            }
+//        });
+//    });
+//}
 
 
 function makeFullScreen() {
@@ -121,93 +120,93 @@ function countDown() {
     }, 1000);
 }
 
+//
+//function drawingTimer() {
+//
+//    drawingAllowed = true;
+//
+//    $('#getReady').hide();
+//
+//    var timerCount = 0;
+//    $('#drawingCountDown').html(numSeconds + 1);
+//    $('#drawingCountDown').show();
+//
+//    // load the image now so it'll be ready in the transition
+//    var owlVal = getRandomInt(0, numOwls);
+//    var image = host + owlVal + '.jpg';
+//    $('#owlDiv').css('background-image', 'url(' + image + ')');
+//    curOwl++;
+//
+//    // countdown timer
+//    var timerId = setInterval(function () {
+//        $('#drawingCountDown').html(numSeconds - timerCount);
+//        timerCount++;
+//    }, 1000);
+//
+//    // 30 seconds for the owl to display
+//    setTimeout(function () {
+//        processingOwl(timerId);
+//    }, numMilliSeconds);
+//}
+//
+//function processingOwl(id) {
+//
+//    drawingAllowed = false;
+//    $('#message').hide();
+//    $('#drawingCountDown').hide();
+//    window.clearInterval(id);
+//
+//    $('#processOwl').show();
+//    var q = 0;
+//    var text = ['..', '.', '&nbsp;'];
+//    var poID = setInterval(function () {
+//        $('#processing').html(text[q]);
+//        if (q === 3) {
+//            $('#processing').html('...');
+//            $('#processOwl').hide();
+//            showOwl(poID);
+//        }
+//        q++;
+//    }, 1000);
+//}
+//
+//
+///**
+// * Show the 'finished' owl
+// */
+//function showOwl(id) {
+//    window.clearInterval(id);
+//
+//    $('#owlDiv').show();
+//    setTimeout(function () {
+//        $('#owlDiv').hide();
+//        countDown();
+//    }, showOwlTime);
+//}
 
-function drawingTimer() {
 
-    drawingAllowed = true;
-
-    $('#getReady').hide();
-
-    var timerCount = 0;
-    $('#drawingCountDown').html(numSeconds + 1);
-    $('#drawingCountDown').show();
-
-    // load the image now so it'll be ready in the transition
-    var owlVal = getRandomInt(0, numOwls);
-    var image = host + owlVal + '.jpg';
-    $('#owlDiv').css('background-image', 'url(' + image + ')');
-    curOwl++;
-
-    // countdown timer
-    var timerId = setInterval(function () {
-        $('#drawingCountDown').html(numSeconds - timerCount);
-        timerCount++;
-    }, 1000);
-
-    // 30 seconds for the owl to display
-    setTimeout(function () {
-        processingOwl(timerId);
-    }, numMilliSeconds);
-}
-
-function processingOwl(id) {
-
-    drawingAllowed = false;
-    $('#message').hide();
-    $('#drawingCountDown').hide();
-    window.clearInterval(id);
-
-    $('#processOwl').show();
-    var q = 0;
-    var text = ['..', '.', '&nbsp;'];
-    var poID = setInterval(function () {
-        $('#processing').html(text[q]);
-        if (q === 3) {
-            $('#processing').html('...');
-            $('#processOwl').hide();
-            showOwl(poID);
-        }
-        q++;
-    }, 1000);
-}
-
-
-/**
- * Show the 'finished' owl
- */
-function showOwl(id) {
-    window.clearInterval(id);
-
-    $('#owlDiv').show();
-    setTimeout(function () {
-        $('#owlDiv').hide();
-        countDown();
-    }, showOwlTime);
-}
-
-
-/**
- * Creates a canvas element, loads images, adds events, and draws the canvas for the first time.
- */
-function prepareCanvas() {
-    canvasWidth = $(window).width();
-    drawingAreaWidth = canvasWidth;
-    canvasHeight = $(window).height();
-    drawingAreaHeight = canvasHeight;
-    // Create the canvas (Neccessary for IE because it doesn't know what a canvas element is)
-    var canvasDiv = document.getElementById('canvasDiv');
-    canvas = document.createElement('canvas');
-    canvas.setAttribute('width', canvasWidth);
-    canvas.setAttribute('height', canvasHeight);
-    canvas.setAttribute('id', 'canvas');
-    canvasDiv.appendChild(canvas);
-    context = canvas.getContext("2d"); // Grab the 2d canvas context
-
-    document.getElementById("canvasDiv");
-    redraw();
-    countDown();
-
-}
+///**
+// * Creates a canvas element, loads images, adds events, and draws the canvas for the first time.
+// */
+//function prepareCanvas() {
+//    canvasWidth = $(window).width();
+//    drawingAreaWidth = canvasWidth;
+//    canvasHeight = $(window).height();
+//    drawingAreaHeight = canvasHeight;
+//    // Create the canvas (Neccessary for IE because it doesn't know what a canvas element is)
+//    var canvasDiv = document.getElementById('canvasDiv');
+//    canvas = document.createElement('canvas');
+//    canvas.setAttribute('width', canvasWidth);
+//    canvas.setAttribute('height', canvasHeight);
+//    canvas.setAttribute('id', 'canvas');
+//    canvasDiv.appendChild(canvas);
+//    context = canvas.getContext("2d"); // Grab the 2d canvas context
+//
+//    document.getElementById("canvasDiv");
+//    redraw();
+//    countDown();
+//
+//}
 
 /**
  * Adds a point to the drawing array.

@@ -11,7 +11,8 @@ var clickLY = [];
 var clickColor = [];
 var clickTool = [];
 var clickSize = [];
-var clickDrag = [];
+var clickDragL = [];
+var clickDragR = [];
 var paint = false;
 var curLColor = "#39FF14";
 var curRColor = "#F66733";
@@ -46,18 +47,16 @@ var buff = 0.2;
 var buffMulti = 1.0 / (1.0 - (2 * buff));
 var maxBuff = 1.0 - buff;
 
+var radius = 20;
 
 
 function FOVify(fovnum) {
 
-    var buff = 0.3;
-
-    console.log('num before: ', fovnum);
+    var buff = 0.1;
     var num = false;
 
     if (fovnum >= buff && fovnum <= maxBuff) {
         num = (fovnum - buff) * buffMulti;
-        console.log('num after: ', num);
         return num;
     } else {
         return false;
@@ -70,7 +69,7 @@ function setupSocket() {
         var index = 0;
         var alreadyTracked = false;
 
-        for(var i = 0; i < bodyFrame.bodies.length; i++){
+        for (var i = 0; i < bodyFrame.bodies.length; i++) {
             var body = bodyFrame.bodies[i];
 
             if (body.tracked && !alreadyTracked) {
@@ -83,34 +82,31 @@ function setupSocket() {
                 var RposX = FOVify(body.joints[11].depthX);
                 var RposY = FOVify(body.joints[11].depthY);
 
-
-                if(LposX && LposY){
+                if (LposX && LposY) {
                     var LX = LposX * canvasWidth;
                     var LY = LposY * canvasHeight;
                 }
 
-                if(RposX && RposY){
+                if (RposX && RposY) {
                     var RX = RposX * canvasWidth;
                     var RY = RposY * canvasHeight;
                 }
 
-                var updateMe = false;
-                if(body.leftHandState === 2 && LposX && LposY) {
-                    console.log('drawing left');
-                    updateMe = true;
+                var updateMeL = false;
+                var updateMeR = false;
+                if (body.leftHandState === 2 && LposX && LposY) {
+                   updateMeL = true;
                     addClick(LX, LY, true, true);
                 }
 
-                if(body.rightHandState === 2 && RposX && RposY){
-                    console.log('drawing right');
-                    updateMe = true;
+                if (body.rightHandState === 2 && RposX && RposY) {
+                    updateMeR = true;
                     addClick(RX, RY, true, false);
                 }
 
-                if(updateMe){
-                    redraw();
-                } else {
-                    restartPath();
+                if (updateMeL || updateMeR) {
+                    redraw(updateMeL, updateMeR);
+                    //restartPath(!updateMeL, !updateMeR, true);
                 }
                 index++;
             }
@@ -149,18 +145,17 @@ function countDown() {
     clearHistory();
     setupSocket();
     $('#getReady').show();
-    $('#message').show();
-    $('#ready').show();
+    $('#message').hide();
     var i = 0;
-    var text = ['&nbsp', 'First draw two circles', '&nbsp;', 'Next, open your hands and draw the owl', ''];
+    var text = ['First draw two circles', '&nbsp;', 'Open your hands', 'Draw the owl', ''];
     var id = setInterval(function () {
         $('#countDown').html(text[i]);
 
-        if( i === 2){
-            $('#message').hide();
+        if(i === 0){
             $('#ready').hide();
+        } else if(i === 1){
             drawCircles();
-        } else if (i === 4) {
+        } else if (i === 5) {
             window.clearInterval(id);
             drawingTimer();
         }
@@ -194,7 +189,7 @@ function drawingTimer() {
     // 30 seconds for the owl to display
     setTimeout(function () {
         processingOwl(timerId);
-    }, numMilliSeconds);
+    }, numMilliSeconds - 1000);
 }
 
 function processingOwl(id) {
@@ -271,13 +266,12 @@ function addClick(x, y, dragging, LEFT_HAND) {
     if (LEFT_HAND) {
         clickLX.push(x);
         clickLY.push(y);
+        clickDragL.push(dragging);
     } else {
         clickRX.push(x);
         clickRY.push(y);
+        clickDragR.push(dragging);
     }
-    clickTool.push(curTool);
-    clickSize.push("huge");
-    clickDrag.push(dragging);
 }
 
 /**
@@ -288,7 +282,11 @@ function clearCanvas() {
     curLColor = colors[Math.floor(Math.random() * colors.length)];
     curRColor = colors[Math.floor(Math.random() * colors.length)];
     context.fillStyle = "black";
+    context.lineJoin = "round";
+    context.lineWidth = radius;
+
     context.fillRect(0, 0, canvasWidth, canvasHeight);
+
 }
 
 function getRandomInt(min, max) {
@@ -314,15 +312,19 @@ function drawCircles() {
     context.beginPath();
     context.arc(center2X, center2Y, radius2, 0, 2 * Math.PI, false);
     context.lineWidth = 5;
-    context.strokeStyle = '#444444';
     context.stroke();
 }
 
-function restartPath() {
-    clickRX = [];
-    clickRY = [];
-    clickLX = [];
-    clickLY = [];
+function restartPath(left, right, both) {
+    if (right || both) {
+        clickRX = [];
+        clickRY = [];
+        clickDragR = [];
+    } else if (left || both) {
+        clickLX = [];
+        clickLY = [];
+        clickDragL = [];
+    }
 }
 
 
@@ -331,6 +333,8 @@ function clearHistory() {
     clickRY = [];
     clickLX = [];
     clickLY = [];
+    clickDragL = [];
+    clickDragR = [];
     clearCanvas();
 
     numSeconds = getRandomInt(10, 22);
@@ -340,68 +344,38 @@ function clearHistory() {
 /**
  * Redraws the canvas.
  */
-function redraw() {
-    // Keep the drawing in the drawing area
-    context.save();
-    context.beginPath();
-    context.rect(drawingAreaX, drawingAreaY, drawingAreaWidth, drawingAreaHeight);
-    context.clip();
+function redraw(left, right) {
 
-    var radius = 20;
-    var i = 0;
-    for (i = 0; i < clickRX.length; i++) {
-
+    if (left) {
         context.beginPath();
-        if (clickDrag[i] && i) {
-            context.moveTo(clickRX[i - 1], clickRY[i - 1]);
-        } else {
-            context.moveTo(clickRX[i], clickRY[i]);
+        context.strokeStyle = curLColor;
+        for (var j = 0; j < clickLX.length; j++) {
+            if (clickDragL[j] && j) {
+                context.moveTo(clickLX[j - 1], clickLY[j - 1]);
+            } else {
+                context.moveTo(clickLX[j], clickLY[j]);
+            }
+            context.lineTo(clickLX[j], clickLY[j]);
         }
-        context.lineTo(clickRX[i], clickRY[i]);
-        context.closePath();
-
-        if (clickTool[i] == "eraser") {
-            //context.globalCompositeOperation = "destination-out"; // To erase instead of draw over with white
-            context.strokeStyle = 'white';
-        } else {
-            //context.globalCompositeOperation = "source-over";	// To erase instead of draw over with white
-            context.strokeStyle = curLColor;
-        }
-        context.lineJoin = "round";
-        context.lineWidth = radius;
         context.stroke();
-
+    } else {
+        restartPath(true, false, false);
     }
 
-    for (var j = 0; j < clickLX.length; j++) {
-
+    if (right) {
         context.beginPath();
-        if (clickDrag[j] && j) {
-            context.moveTo(clickLX[j - 1], clickRY[j - 1]);
-        } else {
-            context.moveTo(clickLX[j], clickRY[j]);
+        context.strokeStyle = curRColor;
+        for (var i = 0; i < clickRX.length; i++) {
+            if (clickDragR[i] && i) {
+                context.moveTo(clickRX[i - 1], clickRY[i - 1]);
+            } else {
+                context.moveTo(clickRX[i], clickRY[i]);
+            }
+            context.lineTo(clickRX[i], clickRY[i]);
         }
-        context.lineTo(clickLX[j], clickRY[j]);
-        context.closePath();
-
-        if (clickTool[j] == "eraser") {
-            context.strokeStyle = 'white';
-        } else {
-            context.strokeStyle = curRColor;
-        }
-        context.lineJoin = "round";
-        context.lineWidth = radius;
         context.stroke();
-
+    } else {
+        restartPath(false, true, false);
     }
-
-    //context.restore();
-
-    // Overlay a crayon texture (if the current tool is crayon)
-    if (curTool == "crayon") {
-        context.globalAlpha = 0.4; // No IE support
-        context.drawImage(crayonTextureImage, 0, 0, canvasWidth, canvasHeight);
-    }
-    context.globalAlpha = 1; // No IE support
 
 }
