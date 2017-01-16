@@ -40,14 +40,14 @@ var curOwl = 0;
 
 var drawingAllowed = false;
 
-var socket = io.connect('http://127.0.0.1:5555/');
+var socket = io.connect('http://kinect3.ngrok.io:80/');
 var elem;
 
 var buff = 0.2;
 var buffMulti = 1.0 / (1.0 - (2 * buff));
 var maxBuff = 1.0 - buff;
 
-var radius = 20;
+var radius = 40;
 
 
 function FOVify(fovnum) {
@@ -170,7 +170,7 @@ function drawingTimer() {
 
     $('#getReady').hide();
 
-    var timerCount = 0;
+    var timerCount = 1;
     $('#drawingCountDown').html(numSeconds + 1);
     $('#drawingCountDown').show();
 
@@ -189,7 +189,7 @@ function drawingTimer() {
     // 30 seconds for the owl to display
     setTimeout(function () {
         processingOwl(timerId);
-    }, numMilliSeconds - 1000);
+    }, numMilliSeconds - 2000);
 }
 
 function processingOwl(id) {
