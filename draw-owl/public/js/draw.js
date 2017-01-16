@@ -42,12 +42,21 @@ var drawingAllowed = false;
 var socket = io.connect('http://127.0.0.1:5555/');
 var elem;
 
+var buff = 0.2;
+var buffMulti = 1.0 / (1.0 - (2 * buff));
+var maxBuff = 1.0 - buff;
+
+
+
 function FOVify(fovnum) {
+
+    var buff = 0.3;
+
     console.log('num before: ', fovnum);
     var num = false;
 
-    if (fovnum >= 0.3 && fovnum <= 0.7) {
-        num = (fovnum - 0.3) * 2.5;
+    if (fovnum >= buff && fovnum <= maxBuff) {
+        num = (fovnum - buff) * buffMulti;
         console.log('num after: ', num);
         return num;
     } else {
@@ -133,23 +142,31 @@ function makeFullScreen() {
 }
 
 
+var countDownTimer = 2000;
+
 function countDown() {
     clearCanvas();
     clearHistory();
     setupSocket();
     $('#getReady').show();
     $('#message').show();
+    $('#ready').show();
     var i = 0;
-    var text = ['3', '2', '1', 'Go!', ''];
+    var text = ['&nbsp', 'First draw two circles', '&nbsp;', 'Next, open your hands and draw the owl', ''];
     var id = setInterval(function () {
         $('#countDown').html(text[i]);
-        if (i === 4) {
+
+        if( i === 2){
+            $('#message').hide();
+            $('#ready').hide();
             drawCircles();
+        }
+        if (i === 4) {
             window.clearInterval(id);
             drawingTimer();
         }
         i++;
-    }, 1000);
+    }, countDownTimer);
 }
 
 
@@ -199,7 +216,7 @@ function processingOwl(id) {
             showOwl(poID);
         }
         q++;
-    }, 1000);
+    }, 1500);
 }
 
 
@@ -293,12 +310,12 @@ function drawCircles() {
     context.beginPath();
     context.arc(center1X, center1Y, radius1, 0, 2 * Math.PI, false);
     context.lineWidth = 5;
-    context.strokeStyle = '#FFFFFF';
+    context.strokeStyle = '#444444';
     context.stroke();
     context.beginPath();
     context.arc(center2X, center2Y, radius2, 0, 2 * Math.PI, false);
     context.lineWidth = 5;
-    context.strokeStyle = '#FFFFFF';
+    context.strokeStyle = '#444444';
     context.stroke();
 }
 
