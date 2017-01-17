@@ -49,6 +49,37 @@ var maxBuff = 1.0 - buff;
 
 var radius = 40;
 
+var fovX = 0.3;
+var fovXmulti = 1.5;
+
+var fovY = 0.3;
+var fovYmulti = 1.5;
+
+function FOVifyX(fovnum) {
+    fovnum += fovX;
+    fovnum *= fovXmulti;
+
+    if(fovnum < 0){
+        return 0;
+    } else if (fovnum > 1.0){
+        return 1;
+    } else {
+        return fov;
+    }
+}
+
+function FOVifyY(fovnum) {
+    fovnum += fovY;
+    fovnum *= fovYmulti;
+    if(fovnum < 0){
+        return 0;
+    } else if (fovnum > 1.0){
+        return 1;
+    } else {
+        return fov;
+    }
+}
+
 
 function FOVify(fovnum) {
 
@@ -77,10 +108,15 @@ function setupSocket() {
                 //draw hand states
                 paint = true;
 
-                var LposX = FOVify(body.joints[7].depthX);
-                var LposY = FOVify(body.joints[7].depthY);
-                var RposX = FOVify(body.joints[11].depthX);
-                var RposY = FOVify(body.joints[11].depthY);
+                // var LposX = FOVify(body.joints[7].depthX);
+                // var LposY = FOVify(body.joints[7].depthY);
+                // var RposX = FOVify(body.joints[11].depthX);
+                // var RposY = FOVify(body.joints[11].depthY);
+
+                var LposX = FOVifyX(body.joints[7].depthX);
+                var LposY = FOVifyY(body.joints[7].depthY);
+                var RposX = FOVifyX(body.joints[11].depthX);
+                var RposY = FOVifyY(body.joints[11].depthY);
 
                 if (LposX && LposY) {
                     var LX = LposX * canvasWidth;
@@ -146,7 +182,7 @@ function countDown() {
     $('#getReady').show();
     $('#message').hide();
     var i = 0;
-    var text = ['First draw two circles', '&nbsp;', 'Open your hands', 'Draw the owl', ''];
+    var text = ['First draw two circles', '&nbsp;', 'Draw the owl'];
     var id = setInterval(function () {
         $('#countDown').html(text[i]);
 
@@ -154,7 +190,7 @@ function countDown() {
             $('#ready').hide();
         } else if (i === 1) {
             drawCircles();
-        } else if (i === 5) {
+        } else if (i === 3) {
             window.clearInterval(id);
             drawingTimer();
         }
@@ -188,7 +224,7 @@ function drawingTimer() {
     // 30 seconds for the owl to display
     setTimeout(function () {
         processingOwl(timerId);
-    }, numMilliSeconds - 2000);
+    }, numMilliSeconds);
 }
 
 function processingOwl(id) {
